@@ -77,8 +77,17 @@ d\begin{pmatrix} y_t \\ z_t \end{pmatrix}
 \qquad K = 0.006\, I_2
 ```
 
-The range and bearing of the state are measured at t = 10 and t = 20. The animation shows the joint PDF of
-(y, z) for each filter and the mean state trajectories for μ = 1.5.
+The range and bearing of the state are measured at t = 10 and t = 20:
+
+```math
+\mathbf{z}_k = h(\mathbf{x}_k) + \mathbf{r}_k, \quad \mathbf{r}_k \sim \mathcal{N}(0, R),
+\qquad
+h(\mathbf{x}_k) = \begin{pmatrix} \sqrt{y_k^2 + z_k^2} \\ \operatorname{arctan2}(z_k, y_k) \end{pmatrix},
+\quad
+R = \begin{pmatrix} 0.5^2 & 0 \\ 0 & 0.8^2 \end{pmatrix}
+```
+
+The animation shows the joint PDF of (y, z) for each filter and the mean state trajectories for μ = 1.5.
 
 ![Filtering of the Van der Pol oscillator](docs/figures/vdp2d_filtering.gif)
 
@@ -97,9 +106,22 @@ z_{3t} \\
 \qquad K = 0.006\, I_6
 ```
 
-The range and bearing of each oscillator are measured at t = 5. The animation shows the mean state
-trajectories of LSKF, APPDF and AMF in the phase plane of each oscillator for μ = 2.0 and k = 0.3, on top of
-the PF density.
+The range and bearing of each oscillator are measured at t = 5:
+
+```math
+\mathbf{z}_k = h(\mathbf{x}_k) + \mathbf{r}_k, \quad \mathbf{r}_k \sim \mathcal{N}(0, R),
+\qquad
+h(\mathbf{x}_k) = \begin{pmatrix}
+\sqrt{y_{1,k}^2 + z_{1,k}^2} \\ \operatorname{arctan2}(z_{1,k}, y_{1,k}) \\
+\sqrt{y_{2,k}^2 + z_{2,k}^2} \\ \operatorname{arctan2}(z_{2,k}, y_{2,k}) \\
+\sqrt{y_{3,k}^2 + z_{3,k}^2} \\ \operatorname{arctan2}(z_{3,k}, y_{3,k})
+\end{pmatrix},
+\quad
+R = 0.2^2\, I_6
+```
+
+The animation shows the mean state trajectories of LSKF, APPDF and AMF in the phase plane of each
+oscillator for μ = 2.0 and k = 0.3, on top of the PF density.
 
 ![Filtering of the coupled Van der Pol oscillators](docs/figures/coupled_vdp_filtering.gif)
 
@@ -112,8 +134,13 @@ d\begin{pmatrix} x_t \\ y_t \\ z_t \end{pmatrix}
 \qquad \sigma = 3,\ \rho = 26.5,\ \beta = 1,\ K = 0.4\, I_3
 ```
 
-The full state is measured at t = 10. The animation shows the state PDF of each filter projected onto the
-xy-, yz- and zx-planes.
+The full state is measured at t = 10:
+
+```math
+\mathbf{z}_k = \mathbf{x}_k + \mathbf{r}_k, \quad \mathbf{r}_k \sim \mathcal{N}(0,\ 0.8^2\, I_3)
+```
+
+The animation shows the state PDF of each filter projected onto the xy-, yz- and zx-planes.
 
 ![Filtering of the Lorenz attractor](docs/figures/lorenz63_filtering.gif)
 
