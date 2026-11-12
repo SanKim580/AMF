@@ -17,7 +17,6 @@ estimation* (San Kim, Won Chang, Daniel B. Forger, Dae Wook Kim).
    4. [Running a filter](#34-running-a-filter)
    5. [Outputs](#35-outputs)
 4. [Reproducing the Paper Examples](#4-reproducing-the-paper-examples)
-5. [Citation](#5-citation)
 
 ## 1. Overview
 
@@ -311,30 +310,3 @@ The default settings are:
 
 For other parameter values, pass the measurements explicitly (`--measurements` in `vdp2d/`, `--measurement`
 in the other two folders) or use `--no-measurements`.
-
-**Run time.** The table gives the wall time of the default case with `--workers 8` on an Intel Xeon
-Silver 4510.
-
-| | Van der Pol | Coupled Van der Pol | Lorenz |
-|---|---|---|---|
-| LSKF, CD-CKF, GS-ACD-ECKF | 1–5 s | 4 s | 3 s |
-| AMF | 35 s | 2 min | 3.5 min |
-| PF, `--backend torch` on the CPU | 12 s | 3 min | 3.5 min |
-
-APPDF and the CPU particle filter are the expensive runs. On a node with 64 cores, APPDF takes five minutes
-to an hour per case and the CPU particle filter eleven minutes to an hour and a half. For the ground truth
-on a workstation, use `pf.py --backend torch`. The two backends sample the same model.
-
-**Reproducibility.** LSKF, CD-CKF, GS-ACD-ECKF, APPDF and AMF are deterministic. The torch particle filter
-is reproducible for a given seed. The CPU particle filter is reproducible only statistically, because the
-assignment of particles to worker processes changes from run to run.
-
-## 5. Citation
-
-```bibtex
-@article{kim_amf,
-  title  = {An adaptive split--combine {G}aussian mixture filter for nonlinear and multimodal state estimation},
-  author = {Kim, San and Chang, Won and Forger, Daniel B. and Kim, Dae Wook},
-  note   = {Submitted},
-}
-```
