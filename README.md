@@ -181,7 +181,7 @@ In the code, a Gaussian particle of the paper is an instance of the class `Compo
 ### 3.2. Installation
 
 ```bash
-git clone https://github.com/SanKim580/AMF.git
+git clone https://github.com/tcnllab-oss/AMF.git
 cd AMF
 conda create -n amf python=3.12
 conda activate amf
@@ -197,8 +197,8 @@ PyTorch.
 The paper runs used Python 3.12, NumPy 1.26 and SciPy 1.13 on Linux. A fresh installation from
 `requirements.txt` (NumPy 2.5, SciPy 1.18, pandas 3.1, PyTorch 2.15) was also checked.
 
-APPDF, AMF and the CPU particle filter use a `multiprocessing` pool with the `fork` start method, so they
-need Linux or macOS.
+APPDF, AMF and the CPU particle filter use a `multiprocessing` pool with the `fork` start method. The code
+was run on Linux.
 
 ### 3.3. Quick check
 
@@ -278,9 +278,6 @@ Each run writes to its output directory:
 
 For the mixture filters the mean and covariance are those of the whole mixture. For the PF they are the
 weighted sample mean and covariance.
-
-LSKF, CD-CKF and GS-ACD-ECKF store the time points t = 0, Δt, …, T. APPDF, AMF and the PF store
-t = Δt, …, T, without the initial time.
 
 ## 4. Reproducing the Paper Examples
 
