@@ -77,7 +77,7 @@ d\begin{pmatrix} y_t \\ z_t \end{pmatrix}
 \qquad K = 0.006\, I_2
 ```
 
-The range and bearing of the state are measured at t = 10 and t = 20:
+The state is measured at t = 10 and t = 20:
 
 ```math
 \mathbf{z}_k = h(\mathbf{x}_k) + \mathbf{r}_k, \quad \mathbf{r}_k \sim \mathcal{N}(0, R),
@@ -106,7 +106,7 @@ z_{3t} \\
 \qquad K = 0.006\, I_6
 ```
 
-The range and bearing of each oscillator are measured at t = 5:
+The state is measured at t = 5:
 
 ```math
 \mathbf{z}_k = h(\mathbf{x}_k) + \mathbf{r}_k, \quad \mathbf{r}_k \sim \mathcal{N}(0, R),
