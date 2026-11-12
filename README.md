@@ -82,7 +82,7 @@ The range and bearing of the state are measured at t = 10 and t = 20:
 ```math
 \mathbf{z}_k = h(\mathbf{x}_k) + \mathbf{r}_k, \quad \mathbf{r}_k \sim \mathcal{N}(0, R),
 \qquad
-h(\mathbf{x}_k) = \begin{pmatrix} \sqrt{y_k^2 + z_k^2} \\ \operatorname{arctan2}(z_k, y_k) \end{pmatrix},
+h(\mathbf{x}_k) = \begin{pmatrix} \sqrt{y_k^2 + z_k^2} \\ \mathrm{arctan2}(z_k, y_k) \end{pmatrix},
 \quad
 R = \begin{pmatrix} 0.5^2 & 0 \\ 0 & 0.8^2 \end{pmatrix}
 ```
@@ -112,9 +112,9 @@ The range and bearing of each oscillator are measured at t = 5:
 \mathbf{z}_k = h(\mathbf{x}_k) + \mathbf{r}_k, \quad \mathbf{r}_k \sim \mathcal{N}(0, R),
 \qquad
 h(\mathbf{x}_k) = \begin{pmatrix}
-\sqrt{y_{1,k}^2 + z_{1,k}^2} \\ \operatorname{arctan2}(z_{1,k}, y_{1,k}) \\
-\sqrt{y_{2,k}^2 + z_{2,k}^2} \\ \operatorname{arctan2}(z_{2,k}, y_{2,k}) \\
-\sqrt{y_{3,k}^2 + z_{3,k}^2} \\ \operatorname{arctan2}(z_{3,k}, y_{3,k})
+\sqrt{y_{1,k}^2 + z_{1,k}^2} \\ \mathrm{arctan2}(z_{1,k}, y_{1,k}) \\
+\sqrt{y_{2,k}^2 + z_{2,k}^2} \\ \mathrm{arctan2}(z_{2,k}, y_{2,k}) \\
+\sqrt{y_{3,k}^2 + z_{3,k}^2} \\ \mathrm{arctan2}(z_{3,k}, y_{3,k})
 \end{pmatrix},
 \quad
 R = 0.2^2\, I_6
