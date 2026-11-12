@@ -13,8 +13,9 @@ estimation* (San Kim, Won Chang, Daniel B. Forger, Dae Wook Kim).
 3. [Code Implementation](#3-code-implementation)
    1. [Code structure](#31-code-structure)
    2. [Installation](#32-installation)
-   3. [Running a filter](#33-running-a-filter)
-   4. [Outputs](#34-outputs)
+   3. [Quick check](#33-quick-check)
+   4. [Running a filter](#34-running-a-filter)
+   5. [Outputs](#35-outputs)
 4. [Reproducing the Paper Examples](#4-reproducing-the-paper-examples)
 5. [Citation](#5-citation)
 
@@ -153,15 +154,50 @@ cd AMF
 conda create -n amf python=3.12
 conda activate amf
 pip install -r requirements.txt
+pip install torch          # optional: only for `pf.py --backend torch`
+pip install matplotlib     # optional: only for the plot in the quick check
 ```
 
-The code was run with Python 3.12, NumPy 1.26 and SciPy 1.13 on Linux. PyTorch is optional and only needed
-for `pf.py --backend torch`.
+Any Python 3.12 environment works in place of conda, for example one made with `python -m venv`. On Linux,
+`pip install torch --index-url https://download.pytorch.org/whl/cpu` installs the smaller CPU-only build of
+PyTorch.
+
+The paper runs used Python 3.12, NumPy 1.26 and SciPy 1.13 on Linux. A fresh installation from
+`requirements.txt` (NumPy 2.5, SciPy 1.18, pandas 3.1, PyTorch 2.15) was also checked.
 
 APPDF, AMF and the CPU particle filter use a `multiprocessing` pool with the `fork` start method, so they
 need Linux or macOS.
 
-### 3.3. Running a filter
+### 3.3. Quick check
+
+The following runs the filtering example of the Van der Pol oscillator (μ = 1.5) with LSKF, AMF and the
+particle filter. It takes about one minute with eight processes.
+
+```bash
+python vdp2d/lskf.py                    # about 1 s
+python vdp2d/amf.py --workers 8         # about 35 s
+python vdp2d/pf.py --backend torch      # about 15 s on a CPU; needs PyTorch
+```
+
+The mean trajectories of the three runs can then be plotted (needs matplotlib):
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+fig, axes = plt.subplots(2, 1, sharex=True, figsize=(8, 5))
+for name, style in [("pf", "k-"), ("lskf", "C0--"), ("amf", "C3-")]:
+    out = np.load(f"results/vdp2d_{name}/covariance.npz")
+    for i, ax in enumerate(axes):
+        ax.plot(out["times"], out["means"][:, i], style, label=name.upper())
+axes[0].set_ylabel("mean of y")
+axes[1].set_ylabel("mean of z")
+axes[1].set_xlabel("t")
+axes[0].legend()
+fig.savefig("results/vdp2d_means.png", dpi=150)
+```
+
+### 3.4. Running a filter
 
 Each script runs the default case of its system when called without arguments:
 
@@ -185,18 +221,19 @@ Use `--help` to list the options of a script. The most common ones are:
 | `--tol` | APPDF, AMF | splitting threshold on the linearization error (ε_threshold) |
 | `--weight-thresh` | APPDF, AMF | particles with a smaller weight are pruned (W_threshold) |
 | `--kl-lambda` | AMF | combining threshold on the KL upper bound (C_threshold) |
-| `--blocksize`, `--kl-mu` | AMF | edge length of the grid cells in which particles are combined; maximum number of particles per cell |
+| `--blocksize` | APPDF, AMF | edge length of the grid cells in which particles are combined; `vdp2d/` takes one value per state, e.g. `--blocksize 0.04 0.04` |
+| `--kl-mu` | AMF | maximum number of particles per grid cell |
 | `--n-particles`, `--seed` | PF | number of particles; random seed |
 | `--backend {cpu,torch}` | PF | `cpu`: adaptive Runge–Kutta per particle in a process pool; `torch`: vectorized RK4, on a GPU if one is available |
 
-For example, a short AMF run on eight processes and a particle filter on the GPU for the same system:
+For example, a short AMF run on eight processes and a torch particle filter for the same system:
 
 ```bash
 python coupled_vdp6d/amf.py --t-end 3 --workers 8 --out results/amf_short
 python coupled_vdp6d/pf.py --backend torch --out results/pf_torch
 ```
 
-### 3.4. Outputs
+### 3.5. Outputs
 
 Each run writes to its output directory:
 
@@ -209,6 +246,9 @@ Each run writes to its output directory:
 
 For the mixture filters the mean and covariance are those of the whole mixture. For the PF they are the
 weighted sample mean and covariance.
+
+LSKF, CD-CKF and GS-ACD-ECKF store the time points t = 0, Δt, …, T. APPDF, AMF and the PF store
+t = Δt, …, T, without the initial time.
 
 ## 4. Reproducing the Paper Examples
 
@@ -239,9 +279,18 @@ The default settings are:
 For other parameter values, pass the measurements explicitly (`--measurements` in `vdp2d/`, `--measurement`
 in the other two folders) or use `--no-measurements`.
 
-**Run time.** LSKF, CD-CKF and GS-ACD-ECKF finish in seconds on one core. On a node with 64 cores, AMF takes
-a few minutes per case, APPDF five minutes to an hour, and the CPU particle filter eleven minutes to an hour
-and a half.
+**Run time.** The table gives the wall time of the default case with `--workers 8` on an Intel Xeon
+Silver 4510.
+
+| | Van der Pol | Coupled Van der Pol | Lorenz |
+|---|---|---|---|
+| LSKF, CD-CKF, GS-ACD-ECKF | 1–5 s | 4 s | 3 s |
+| AMF | 35 s | 2 min | 3.5 min |
+| PF, `--backend torch` on the CPU | 12 s | 3 min | 3.5 min |
+
+APPDF and the CPU particle filter are the expensive runs. On a node with 64 cores, APPDF takes five minutes
+to an hour per case and the CPU particle filter eleven minutes to an hour and a half. For the ground truth
+on a workstation, use `pf.py --backend torch`. The two backends sample the same model.
 
 **Reproducibility.** LSKF, CD-CKF, GS-ACD-ECKF, APPDF and AMF are deterministic. The torch particle filter
 is reproducible for a given seed. The CPU particle filter is reproducible only statistically, because the
