@@ -85,10 +85,16 @@ The range and bearing of the state are measured at t = 10 and t = 20. The animat
 ### 2.2. Coupled Van der Pol oscillators
 
 ```math
-d\begin{pmatrix} y_{i,t} \\ z_{i,t} \end{pmatrix}
-= \begin{pmatrix} z_{i,t} \\ \mu (1 - y_{i,t}^2) z_{i,t} - y_{i,t} + k \big(y_{i-1,t} + y_{i+1,t} - 2 y_{i,t}\big) \end{pmatrix} dt
-+ \sqrt{0.006}\, dW_{i,t},
-\qquad i = 1, 2, 3 \ (\text{indices modulo } 3)
+d\begin{pmatrix} y_{1t} \\ z_{1t} \\ y_{2t} \\ z_{2t} \\ y_{3t} \\ z_{3t} \end{pmatrix}
+= \begin{pmatrix}
+z_{1t} \\
+\mu (1 - y_{1t}^2) z_{1t} - y_{1t} + k (y_{2t} + y_{3t} - 2 y_{1t}) \\
+z_{2t} \\
+\mu (1 - y_{2t}^2) z_{2t} - y_{2t} + k (y_{1t} + y_{3t} - 2 y_{2t}) \\
+z_{3t} \\
+\mu (1 - y_{3t}^2) z_{3t} - y_{3t} + k (y_{1t} + y_{2t} - 2 y_{3t})
+\end{pmatrix} dt + \sqrt{K}\, dW_t,
+\qquad K = 0.006\, I_6
 ```
 
 The range and bearing of each oscillator are measured at t = 5. The animation shows the mean state
