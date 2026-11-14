@@ -13,9 +13,8 @@ estimation* (San Kim, Won Chang, Daniel B. Forger, Dae Wook Kim).
 3. [Code Implementation](#3-code-implementation)
    1. [Code structure](#31-code-structure)
    2. [Installation](#32-installation)
-   3. [Quick check](#33-quick-check)
-   4. [Running a filter](#34-running-a-filter)
-   5. [Outputs](#35-outputs)
+   3. [Running a filter](#33-running-a-filter)
+   4. [Outputs](#34-outputs)
 4. [Reproducing the Paper Examples](#4-reproducing-the-paper-examples)
 
 ## 1. Overview
@@ -187,7 +186,7 @@ conda create -n amf python=3.12
 conda activate amf
 pip install -r requirements.txt
 pip install torch          # optional: only for `pf.py --backend torch`
-pip install matplotlib     # optional: only for the plot in the quick check
+pip install matplotlib     # optional: only for plotting the results
 ```
 
 Any Python 3.12 environment works in place of conda, for example one made with `python -m venv`. On Linux,
@@ -200,36 +199,7 @@ The paper runs used Python 3.12, NumPy 1.26 and SciPy 1.13 on Linux. A fresh ins
 APPDF, AMF and the CPU particle filter use a `multiprocessing` pool with the `fork` start method. The code
 was run on Linux.
 
-### 3.3. Quick check
-
-The following runs the filtering example of the Van der Pol oscillator (μ = 1.5) with LSKF, AMF and the
-particle filter. It takes about one minute with eight processes.
-
-```bash
-python vdp2d/lskf.py                    # about 1 s
-python vdp2d/amf.py --workers 8         # about 35 s
-python vdp2d/pf.py --backend torch      # about 15 s on a CPU; needs PyTorch
-```
-
-The mean trajectories of the three runs can then be plotted (needs matplotlib):
-
-```python
-import numpy as np
-import matplotlib.pyplot as plt
-
-fig, axes = plt.subplots(2, 1, sharex=True, figsize=(8, 5))
-for name, style in [("pf", "k-"), ("lskf", "C0--"), ("amf", "C3-")]:
-    out = np.load(f"results/vdp2d_{name}/covariance.npz")
-    for i, ax in enumerate(axes):
-        ax.plot(out["times"], out["means"][:, i], style, label=name.upper())
-axes[0].set_ylabel("mean of y")
-axes[1].set_ylabel("mean of z")
-axes[1].set_xlabel("t")
-axes[0].legend()
-fig.savefig("results/vdp2d_means.png", dpi=150)
-```
-
-### 3.4. Running a filter
+### 3.3. Running a filter
 
 Each script runs the default case of its system when called without arguments:
 
@@ -265,7 +235,7 @@ python coupled_vdp6d/amf.py --t-end 3 --workers 8 --out results/amf_short
 python coupled_vdp6d/pf.py --backend torch --out results/pf_torch
 ```
 
-### 3.5. Outputs
+### 3.4. Outputs
 
 Each run writes to its output directory:
 
@@ -278,6 +248,27 @@ Each run writes to its output directory:
 
 For the mixture filters the mean and covariance are those of the whole mixture. For the PF they are the
 weighted sample mean and covariance.
+
+The mean trajectories can be plotted from `covariance.npz`, for example for the Van der Pol oscillator
+(needs matplotlib):
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+runs = {"LSKF": "results/vdp2d_lskf", "AMF": "results/vdp2d_amf"}   # label: output directory
+
+fig, axes = plt.subplots(2, 1, sharex=True, figsize=(8, 5))
+for label, path in runs.items():
+    out = np.load(f"{path}/covariance.npz")
+    for i, ax in enumerate(axes):
+        ax.plot(out["times"], out["means"][:, i], label=label)
+axes[0].set_ylabel("mean of y")
+axes[1].set_ylabel("mean of z")
+axes[1].set_xlabel("t")
+axes[0].legend()
+fig.savefig("results/vdp2d_means.png", dpi=150)
+```
 
 ## 4. Reproducing the Paper Examples
 

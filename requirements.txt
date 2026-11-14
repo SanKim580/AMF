@@ -3,5 +3,5 @@ scipy>=1.10
 pandas>=1.5
 # optional: only for `pf.py --backend torch`
 # torch>=2.0
-# optional: only for the plot in the README quick check
+# optional: only for plotting the results
 # matplotlib>=3.7
